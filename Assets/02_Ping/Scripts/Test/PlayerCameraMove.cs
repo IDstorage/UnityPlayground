@@ -42,7 +42,6 @@ namespace UP02
 
         void LateUpdate()
         {
-            // 변경된 카메라 위치 적용
             transform.position = target.position + offset;
             transform.LookAt(target);
         }

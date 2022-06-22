@@ -21,6 +21,7 @@ namespace UP02
             {
                 marks.Pop().Return();
             }
+            
             while (marks.Count < Ping.pingList.Count)
             {
                 marks.Push(UP01.PoolManager.Instance.Get("PingMark"));
