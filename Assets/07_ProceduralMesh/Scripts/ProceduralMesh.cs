@@ -16,7 +16,12 @@ namespace UP07
 
         [SerializeField] private AnimationCurve curve;
 
+        [Header("Transform")]
+        [SerializeField] private Vector3 eulerAngles;
+        [SerializeField] private Vector3 localScale = Vector3.one;
+
         private Mesh mesh;
+        private Vector3[] originVertices;
         private Vector3[] vertices;
 
         private Camera cam;
@@ -44,14 +49,19 @@ namespace UP07
         {
             if (mesh == null) return;
 
-            vertices = new Vector3[(width + 1) * (height + 1)];
+
+            originVertices = new Vector3[(width + 1) * (height + 1)];
+            vertices = new Vector3[originVertices.Length];
             int[] triangles = new int[width * height * 6];
+
+            (int w, int h) halfSize = (width / 2, height / 2);
+
             for (int y = 0; y <= height; ++y)
             {
                 for (int x = 0; x <= width; ++x)
                 {
                     int vIdx = y * (width + 1) + x;
-                    vertices[vIdx] = new Vector3(x, 0F, y);
+                    originVertices[vIdx] = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(eulerAngles), localScale) * new Vector3(x - halfSize.w, 0F, y - halfSize.h);
                 }
             }
 
@@ -67,7 +77,7 @@ namespace UP07
                 }
             }
 
-            mesh.vertices = vertices;
+            mesh.vertices = originVertices;
             mesh.triangles = triangles;
         }
 
@@ -111,7 +121,10 @@ namespace UP07
 
             Vector3 hitPosition = camPosition + ray.direction * length;
 
-            if (!Input.GetMouseButton(0)) return;
+            var trsMatrix = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(eulerAngles), localScale);
+            Vector3 upDir = trsMatrix * Vector3.up;
+
+            (int w, int h) halfSize = (width / 2, height / 2);
 
             for (int y = 0; y <= height; ++y)
             {
@@ -119,10 +132,13 @@ namespace UP07
                 {
                     int vIdx = y * (width + 1) + x;
 
-                    float threshold = new Vector2(x - hitPosition.x, y - hitPosition.z).sqrMagnitude;
-                    threshold = curve.Evaluate(threshold * rangeScale);
+                    vertices[vIdx] = trsMatrix * originVertices[vIdx];
 
-                    vertices[vIdx].y += Mathf.Lerp(maximumHeight, 0F, threshold) * Time.deltaTime;
+                    if (!Input.GetMouseButton(0)) continue;
+
+                    float threshold = new Vector2((x - halfSize.w) - hitPosition.x, (y - halfSize.h) - hitPosition.z).sqrMagnitude;
+                    threshold = curve.Evaluate(threshold * rangeScale);
+                    originVertices[vIdx].y += Mathf.Lerp(maximumHeight, 0F, threshold) * Time.deltaTime;
                 }
             }
             mesh.vertices = vertices;
