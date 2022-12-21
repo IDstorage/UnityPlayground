@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1c8b10b1316b844fb43af7ca3fea2b2, type: 3}
-  m_Name: PoolRecipe
+  m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
+  m_Name: Pool_ContentUpdateGroupSchema
   m_EditorClassIdentifier: 
-  objectList:
-  - {fileID: 3434173326191690921, guid: 486c30459e47860448264c8cfb848b76, type: 3}
-  - {fileID: 7492902636025727041, guid: c73fe8ec3a1b4db4fb715e678623ae23, type: 3}
+  m_Group: {fileID: 11400000, guid: 0da4dba50aa921340aa9cf0d7d7f4f55, type: 2}
+  m_StaticContent: 0

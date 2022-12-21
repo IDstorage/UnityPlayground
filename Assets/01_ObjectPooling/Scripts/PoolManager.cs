@@ -1,38 +1,75 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace UP01
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.AddressableAssets;
+
+    // Smart Coroutine
+    using UP04;
+
     public class PoolManager : MonoBehaviour
     {
-        private static PoolManager instance = null;
-        public static PoolManager Instance => instance ?? (instance = GameObject.FindObjectOfType<PoolManager>());
+        public static PoolManager Instance { get; private set; } = null;
 
-        [SerializeField]
-        private PoolRecipe recipe;
-
+        [SerializeField] private AssetLabelReference[] recipeLabels;
+        private List<PoolRecipe> recipes = new List<PoolRecipe>();
 
         private Dictionary<string, Queue<PoolObject>> pool = new Dictionary<string, Queue<PoolObject>>();
 
 
+        private bool isInitialized = false;
+
+
         private void Awake()
         {
-            if (!ReferenceEquals(instance, null))
+            if (!ReferenceEquals(Instance, null))
             {
                 Destroy(gameObject);
                 return;
             }
 
             DontDestroyOnLoad(gameObject);
-            instance = this;
+            Instance = this;
+
+            SmartCoroutine.Create(CoInitialize());
+
+            IEnumerator CoInitialize()
+            {
+                isInitialized = false;
+
+                for (int i = 0; i < recipeLabels.Length; ++i)
+                {
+                    var op = Addressables.LoadAssetAsync<PoolRecipe>(recipeLabels[i]);
+                    yield return op;
+
+                    if (op.Result == null) continue;
+
+                    var cloneRecipe = op.Result.Clone();
+                    cloneRecipe.Initialize();
+                    recipes.Add(cloneRecipe);
+                }
+
+                isInitialized = true;
+            }
         }
 
+
+        private PoolObject Find(string name)
+        {
+            string prefix = name.Split('/')[0];
+            for (int i = 0; i < recipes.Count; ++i)
+            {
+                var target = recipes[i].Find(name);
+                if (target != null) return target;
+            }
+            return null;
+        }
 
 
         public void WarmUp(string name, int count)
         {
-            var target = recipe.Find(name);
+            var target = Find(name);
             if (target == null) return;
 
             if (!pool.ContainsKey(name))
@@ -53,10 +90,10 @@ namespace UP01
         {
             if (!pool.ContainsKey(name))
             {
-                WarmUp(name, 5);
+                WarmUp(name, 10);
             }
 
-            if (pool[name].Count == 0 )
+            if (pool[name].Count == 0)
             {
                 WarmUp(name, 1);
             }

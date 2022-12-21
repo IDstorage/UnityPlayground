@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Pool
+  m_EditorClassIdentifier: 
+  m_GroupName: Pool
+  m_Data:
+    m_SerializedData: []
+  m_GUID: d989df3bcc8703b4bab313a4993d43ad
+  m_SerializeEntries:
+  - m_GUID: a9ddd8e5cbcdee5469e4696cee542ed4
+    m_Address: DefaultPoolRecipe
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Pool/Default
+  - m_GUID: 2c9479ec94a557b42945d88c8cb5fca9
+    m_Address: UIPoolRecipe
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Pool/UI
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 9ff549e935f0c674a90f0f37ec3f530e, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 5d5844fe39b87894286252760405b2ff, type: 2}
+    - {fileID: 11400000, guid: 0961960ffef0cc942b2a97b18a88d1ee, type: 2}

@@ -1,3 +1,6 @@
-using UnityEngine;
+namespace UP04
+{
+    using UnityEngine;
 
-public class SmartCoroutineInstance : MonoBehaviour {}
+    public class SmartCoroutineInstance : MonoBehaviour { }
+}
