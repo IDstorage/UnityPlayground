@@ -89,15 +89,12 @@ namespace UP08
         }
         private static void Focus(int idx)
         {
-            (int prev, int current) order = (PopupStack[idx].Order, PopupStack[PopupStack.Count - 1].Order);
+            var targetPopup = PopupStack[idx];
 
-            var temp = PopupStack[idx];
-            PopupStack[idx] = PopupStack[PopupStack.Count - 1];
-            PopupStack[PopupStack.Count - 1] = temp;
+            PopupStack.RemoveAt(idx);
+            PopupStack.Add(targetPopup);
 
-            PopupStack[idx].Order = order.prev;
-            PopupStack[PopupStack.Count - 1].Order = order.current;
-
+            targetPopup.Order = Current.Order;
             Current = PopupStack[PopupStack.Count - 1];
         }
 
