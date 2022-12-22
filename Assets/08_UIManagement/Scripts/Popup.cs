@@ -15,6 +15,19 @@ namespace UP08
 
         [SerializeField] protected Canvas canvas;
 
+        public int Order
+        {
+            get
+            {
+                if (canvas == null) return 0;
+                return canvas.sortingOrder;
+            }
+            set
+            {
+                canvas.sortingOrder = value;
+            }
+        }
+
         public abstract IEnumerator OnEnter(UIEventParam param = null);
         public abstract IEnumerator OnExit();
 
@@ -26,11 +39,6 @@ namespace UP08
         public void Focus()
         {
             PopupController.Focus(this);
-        }
-
-        public void SetCanvasOrder(int order)
-        {
-            canvas.sortingOrder = order;
         }
     }
 }

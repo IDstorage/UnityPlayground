@@ -125,9 +125,16 @@ namespace UP08.Test
             while (true)
             {
                 yield return null;
-                while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
+                while (!Input.GetKeyUp(KeyCode.Alpha1) && !Input.GetKeyUp(KeyCode.Alpha2)) yield return null;
 
-                PopupController.Show(Random.Range(0, 100) < 50 ? "CommonPopup" : "CommonPopup2");
+                if (Input.GetKeyUp(KeyCode.Alpha1))
+                {
+                    PopupController.Show("CommonPopup");
+                }
+                else
+                {
+                    PopupController.Show("CommonPopup2");
+                }
             }
         }
     }

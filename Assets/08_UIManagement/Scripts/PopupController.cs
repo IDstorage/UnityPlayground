@@ -33,8 +33,11 @@ namespace UP08
 
             IEnumerator CoShow(Popup popup)
             {
-                popup.SetCanvasOrder(PopupStack.Count);
+                popup.Order = Current == null ? 0 : Current.Order + 1;
+
+                Current = popup;
                 PopupStack.Add(popup);
+
                 yield return popup.OnEnter(param);
             }
         }
@@ -48,8 +51,10 @@ namespace UP08
                 var hiddenPopup = PopupStack[PopupStack.Count - 1];
 
                 PopupStack.RemoveAt(PopupStack.Count - 1);
-                yield return hiddenPopup.OnExit();
+                Current = PopupStack.Count == 0 ? null : PopupStack[PopupStack.Count - 1];
+
                 hiddenPopup.gameObject.SetActive(false);
+                yield return hiddenPopup.OnExit();
 
                 var poolObj = hiddenPopup.GetComponent<PoolObject>();
                 poolObj?.Return();
@@ -84,12 +89,16 @@ namespace UP08
         }
         private static void Focus(int idx)
         {
+            (int prev, int current) order = (PopupStack[idx].Order, PopupStack[PopupStack.Count - 1].Order);
+
             var temp = PopupStack[idx];
             PopupStack[idx] = PopupStack[PopupStack.Count - 1];
             PopupStack[PopupStack.Count - 1] = temp;
 
-            PopupStack[idx].SetCanvasOrder(idx);
-            PopupStack[PopupStack.Count - 1].SetCanvasOrder(PopupStack.Count - 1);
+            PopupStack[idx].Order = order.prev;
+            PopupStack[PopupStack.Count - 1].Order = order.current;
+
+            Current = PopupStack[PopupStack.Count - 1];
         }
 
         public static int FindIndex(string name)

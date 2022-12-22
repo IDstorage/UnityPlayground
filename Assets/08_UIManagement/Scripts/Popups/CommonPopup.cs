@@ -20,5 +20,10 @@ namespace UP08
             Debug.Log($"<color={ColorUtility.ToHtmlStringRGB(logColor)}> <<< {LayoutName} Exit</color>");
             yield break;
         }
+
+        private void Update()
+        {
+            if (ReferenceEquals(PopupController.Current, this)) Debug.Log(this.titleText.text);
+        }
     }
 }
