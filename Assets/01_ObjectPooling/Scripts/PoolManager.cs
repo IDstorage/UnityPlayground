@@ -67,10 +67,10 @@ namespace UP01
         }
 
 
-        public void WarmUp(string name, int count)
+        public bool WarmUp(string name, int count)
         {
             var target = Find(name);
-            if (target == null) return;
+            if (target == null) return false;
 
             if (!pool.ContainsKey(name))
             {
@@ -83,6 +83,8 @@ namespace UP01
                 obj.Name = name;
                 obj.Return();
             }
+
+            return true;
         }
 
 
@@ -90,12 +92,14 @@ namespace UP01
         {
             if (!pool.ContainsKey(name))
             {
-                WarmUp(name, 10);
+                bool ret = WarmUp(name, 10);
+                if (!ret) return null;
             }
 
             if (pool[name].Count == 0)
             {
-                WarmUp(name, 1);
+                bool ret = WarmUp(name, 1);
+                if (!ret) return null;
             }
 
             var obj = pool[name].Dequeue();
