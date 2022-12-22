@@ -7,20 +7,20 @@ namespace UP08
     {
         public override IEnumerator OnEnter(UIEventParam param = null)
         {
-            Debug.Log($">>>>> {Name} Enter");
+            Debug.Log($">>>>> {LayoutName} Enter");
             yield break;
         }
 
         public override IEnumerator OnExit()
         {
-            Debug.Log($"<<<<< {Name} Exit");
+            Debug.Log($"<<<<< {LayoutName} Exit");
             yield break;
         }
 
 
         public override string ToString()
         {
-            return Name;
+            return LayoutName;
         }
     }
 }

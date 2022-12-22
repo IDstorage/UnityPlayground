@@ -57,7 +57,6 @@ namespace UP01
 
         private PoolObject Find(string name)
         {
-            string prefix = name.Split('/')[0];
             for (int i = 0; i < recipes.Count; ++i)
             {
                 var target = recipes[i].Find(name);
@@ -80,7 +79,7 @@ namespace UP01
             for (int i = 0; i < count; ++i)
             {
                 var obj = Instantiate(target.gameObject).GetComponent<PoolObject>();
-                obj.Name = name;
+                obj.LayoutName = name;
                 obj.Return();
             }
 
@@ -110,7 +109,7 @@ namespace UP01
         public void Add(PoolObject obj)
         {
             obj.gameObject.SetActive(false);
-            pool[obj.Name].Enqueue(obj);
+            pool[obj.LayoutName].Enqueue(obj);
         }
     }
 }

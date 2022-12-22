@@ -10,34 +10,9 @@ namespace UP08
     // SmartCoroutine
     using UP04;
 
-    public class PopupController : MonoBehaviour
+    public class PopupController : UIController<Popup>
     {
-        public static Popup Current { get; protected set; }
         public static List<Popup> PopupStack { get; protected set; } = new List<Popup>();
-
-        private static Dictionary<string, Popup> layouts = new Dictionary<string, Popup>();
-
-
-        protected virtual void Awake()
-        {
-            Current = null;
-
-            layouts.Clear();
-
-            var layoutObjects = GetComponentsInChildren<Popup>(true);
-            for (int i = 0; i < layoutObjects.Length; ++i)
-            {
-                var obj = layoutObjects[i];
-                layouts.Add(obj.name, obj);
-
-                if (!obj.gameObject.activeSelf) continue;
-                Current = obj;
-            }
-
-            if (Current == null) return;
-
-            SmartCoroutine.Create(Current.OnEnter());
-        }
 
 
         public static void Show(string name, UIEventParam param = null)
@@ -46,7 +21,9 @@ namespace UP08
 
             if (!layouts.TryGetValue(name, out popup))
             {
-                popup = PoolManager.Instance.Get(name).GetComponent<Popup>();
+                var poolObj = PoolManager.Instance.Get(name);
+                if (poolObj == null) return;
+                popup = poolObj.GetComponent<Popup>();
             }
 
             if (popup == null) return;
@@ -68,6 +45,7 @@ namespace UP08
             IEnumerator CoHide()
             {
                 var hiddenPopup = PopupStack[PopupStack.Count - 1];
+
                 PopupStack.RemoveAt(PopupStack.Count - 1);
                 yield return hiddenPopup.OnExit();
             }
@@ -111,7 +89,7 @@ namespace UP08
 
         public static int FindIndex(string name)
         {
-            return PopupStack.FindIndex(p => p.Name.CompareTo(name) == 0);
+            return PopupStack.FindIndex(p => p.LayoutName.CompareTo(name) == 0);
         }
         public static int FindIndex(Popup popup)
         {

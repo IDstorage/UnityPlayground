@@ -7,7 +7,7 @@ namespace UP08
     // SmartCoroutine
     using UP04;
 
-    public class SceneController : MonoBehaviour//UIController<Scene>
+    public class SceneController : UIController<Scene>
     {
         public enum LoadSceneMode
         {
@@ -15,32 +15,7 @@ namespace UP08
             Additive
         }
 
-        public static Scene Current { get; protected set; }
         public static CustomLinkedList<Scene> Addition { get; protected set; } = new CustomLinkedList<Scene>();
-
-        private static Dictionary<string, Scene> layouts = new Dictionary<string, Scene>();
-
-
-        protected virtual void Awake()
-        {
-            Current = null;
-
-            layouts.Clear();
-
-            var layoutObjects = GetComponentsInChildren<Scene>(true);
-            for (int i = 0; i < layoutObjects.Length; ++i)
-            {
-                var obj = layoutObjects[i];
-                layouts.Add(obj.name, obj);
-
-                if (!obj.gameObject.activeSelf) continue;
-                Current = obj;
-            }
-
-            if (Current == null) return;
-
-            SmartCoroutine.Create(Current.OnEnter());
-        }
 
 
         public static void Open(string name, LoadSceneMode mode = LoadSceneMode.Single, UIEventParam param = null)
@@ -75,7 +50,7 @@ namespace UP08
             SmartCoroutine.Create(CoClose(dummyCurrent));
         }
 
-        private static IEnumerator CoClose(UILayout current)
+        private static IEnumerator CoClose(Scene current)
         {
             for (var iter = Addition.Begin; iter != null; ++iter)
             {
@@ -98,7 +73,7 @@ namespace UP08
         {
             Debug.Assert(layouts.ContainsKey(name));
 
-            var findRet = Addition.Find(ui => ui.Name.CompareTo(name) == 0);
+            var findRet = Addition.Find(ui => ui.LayoutName.CompareTo(name) == 0);
             if (findRet == null) return; // Throw exception?
 
             Addition.Remove(findRet);

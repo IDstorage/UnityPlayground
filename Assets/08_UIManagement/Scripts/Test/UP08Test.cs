@@ -3,7 +3,7 @@ namespace UP08.Test
     using System.Collections;
     using UnityEngine;
 
-    public class NewBehaviourScript : MonoBehaviour
+    public class UP08Test : MonoBehaviour
     {
         public class A
         {
@@ -16,6 +16,17 @@ namespace UP08.Test
         CustomLinkedList<A> list = new CustomLinkedList<A>();
 
         IEnumerator Start()
+        {
+            //TestCustomLinkedList();
+
+            //yield return TestSceneController();
+
+            yield return TestPopupController();
+
+            yield break;
+        }
+
+        private void TestCustomLinkedList()
         {
             var a1 = new A() { a = 1F };
             var a15 = new A() { a = 1.5f };
@@ -55,49 +66,51 @@ namespace UP08.Test
                 Debug.Log(iter.Current.Data.ToString());
             }
 
-
             Debug.Log("-----");
+        }
 
+        private IEnumerator TestSceneController()
+        {
             SceneController.Open("MainScene");
-            Debug.Log($"Current Scene: {SceneController.Current.Name}");
+            Debug.Log($"Current Scene: {SceneController.Current.LayoutName}");
 
             yield return null;
             while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
 
             SceneController.Open("SubScene");
-            Debug.Log($"Current Scene: {SceneController.Current.Name}");
+            Debug.Log($"Current Scene: {SceneController.Current.LayoutName}");
 
             yield return null;
             while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
 
             SceneController.Open("AdditiveScene1", SceneController.LoadSceneMode.Additive);
             SceneController.Open("AdditiveScene2", SceneController.LoadSceneMode.Additive);
-            Debug.Log($"Current Scene: {SceneController.Current.Name}");
+            Debug.Log($"Current Scene: {SceneController.Current.LayoutName}");
 
             yield return null;
             while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
 
             SceneController.Close("AdditiveScene1");
-            Debug.Log($"Current Scene: {SceneController.Current.Name}");
+            Debug.Log($"Current Scene: {SceneController.Current.LayoutName}");
 
             yield return null;
             while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
 
             SceneController.Open("AdditiveScene1", SceneController.LoadSceneMode.Additive);
-            Debug.Log($"Current Scene: {SceneController.Current.Name}");
+            Debug.Log($"Current Scene: {SceneController.Current.LayoutName}");
 
             yield return null;
             while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
 
             SceneController.Open("MainScene");
-            Debug.Log($"Current Scene: {SceneController.Current.Name}");
+            Debug.Log($"Current Scene: {SceneController.Current.LayoutName}");
 
             yield return null;
             while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
 
             SceneController.Open("AdditiveScene1", SceneController.LoadSceneMode.Additive);
             SceneController.Open("AdditiveScene2", SceneController.LoadSceneMode.Additive);
-            Debug.Log($"Current Scene: {SceneController.Current.Name}");
+            Debug.Log($"Current Scene: {SceneController.Current.LayoutName}");
 
             yield return null;
             while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
@@ -105,6 +118,17 @@ namespace UP08.Test
             Debug.Log(SceneController.Addition.ToString());
 
             SceneController.Close();
+        }
+
+        private IEnumerator TestPopupController()
+        {
+            for (int i = 0; i < 10; ++i)
+            {
+                yield return null;
+                while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
+
+                PopupController.Show("CommonPopup");
+            }
         }
     }
 }

@@ -152,7 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d914a254aa534e24b962cbafe5b29dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recipe: {fileID: 11400000, guid: a9ddd8e5cbcdee5469e4696cee542ed4, type: 2}
+  recipeLabels:
+  - m_LabelString: Pool/Default
+  - m_LabelString: Pool/UI
 --- !u!4 &1830815580
 Transform:
   m_ObjectHideFlags: 0

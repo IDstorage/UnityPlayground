@@ -5,12 +5,11 @@ namespace UP08
 
     public class UIEventParam { }
 
-    public abstract class UILayout : UnityEngine.MonoBehaviour
+    public interface IUILayout
     {
-        [SerializeField] protected string layoutName;
-        public string Name => layoutName;
+        string LayoutName { get; }
 
-        public abstract IEnumerator OnEnter(UIEventParam param = null);
-        public abstract IEnumerator OnExit();
+        IEnumerator OnEnter(UIEventParam param = null);
+        IEnumerator OnExit();
     }
 }

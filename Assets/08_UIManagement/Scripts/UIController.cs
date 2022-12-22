@@ -6,32 +6,26 @@ namespace UP08
     // SmartCoroutine
     using UP04;
 
-    public class UIController<T> : MonoBehaviour where T : UILayout
+    public class UIController<T> : MonoBehaviour where T : MonoBehaviour, IUILayout
     {
-        protected static Dictionary<string, LinkedList<T>> layoutDictionary = new Dictionary<string, LinkedList<T>>();
         public static T Current { get; protected set; }
-
-        [SerializeField] private T firstLayout;
+        protected static Dictionary<string, T> layouts = new Dictionary<string, T>();
 
         protected virtual void Awake()
         {
             Current = null;
 
-            layoutDictionary.Clear();
+            layouts.Clear();
 
-            var layouts = GetComponentsInChildren<T>(true);
-            for (int i = 0; i < layouts.Length; ++i)
+            var layoutObjects = GetComponentsInChildren<T>(true);
+            for (int i = 0; i < layoutObjects.Length; ++i)
             {
-                var list = new LinkedList<T>();
-                list.AddLast(layouts[i]);
+                var obj = layoutObjects[i];
+                layouts.Add(obj.LayoutName, obj);
 
-                layoutDictionary.Add(layouts[i].name, list);
-
-                if (!layouts[i].gameObject.activeSelf) continue;
-                Current = layouts[i];
+                if (!obj.gameObject.activeSelf) continue;
+                Current = obj;
             }
-
-            if (firstLayout != null) Current = firstLayout;
 
             if (Current == null) return;
 
