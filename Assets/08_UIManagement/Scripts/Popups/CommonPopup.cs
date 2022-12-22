@@ -11,13 +11,13 @@ namespace UP08
         public override IEnumerator OnEnter(UIEventParam param = null)
         {
             titleText.text = Random.Range(100, 100000).ToString();
-            Debug.Log($"<color=#{ColorUtility.ToHtmlStringRGB(logColor)}>>>> {LayoutName} Exit</color>");
+            Debug.Log($"<color=#{ColorUtility.ToHtmlStringRGB(logColor)}> >>> {LayoutName} Enter</color>");
             yield break;
         }
 
         public override IEnumerator OnExit()
         {
-            Debug.Log($"<color={ColorUtility.ToHtmlStringRGB(logColor)}><<< {LayoutName} Exit</color>");
+            Debug.Log($"<color={ColorUtility.ToHtmlStringRGB(logColor)}> <<< {LayoutName} Exit</color>");
             yield break;
         }
     }

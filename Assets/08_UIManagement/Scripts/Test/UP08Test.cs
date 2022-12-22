@@ -17,9 +17,9 @@ namespace UP08.Test
 
         IEnumerator Start()
         {
-            //TestCustomLinkedList();
+            TestCustomLinkedList();
 
-            //yield return TestSceneController();
+            yield return TestSceneController();
 
             yield return TestPopupController();
 
@@ -122,12 +122,12 @@ namespace UP08.Test
 
         private IEnumerator TestPopupController()
         {
-            for (int i = 0; i < 10; ++i)
+            while (true)
             {
                 yield return null;
                 while (!Input.GetKeyUp(KeyCode.Return)) yield return null;
 
-                PopupController.Show("CommonPopup");
+                PopupController.Show(Random.Range(0, 100) < 50 ? "CommonPopup" : "CommonPopup2");
             }
         }
     }

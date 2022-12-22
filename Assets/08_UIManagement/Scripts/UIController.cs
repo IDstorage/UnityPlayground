@@ -11,8 +11,12 @@ namespace UP08
         public static T Current { get; protected set; }
         protected static Dictionary<string, T> layouts = new Dictionary<string, T>();
 
+        protected static UIController<T> instance = null;
+
         protected virtual void Awake()
         {
+            instance = this;
+
             Current = null;
 
             layouts.Clear();

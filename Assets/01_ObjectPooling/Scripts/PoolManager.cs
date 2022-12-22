@@ -79,7 +79,7 @@ namespace UP01
             for (int i = 0; i < count; ++i)
             {
                 var obj = Instantiate(target.gameObject).GetComponent<PoolObject>();
-                obj.LayoutName = name;
+                obj.Name = name;
                 obj.Return();
             }
 
@@ -91,7 +91,7 @@ namespace UP01
         {
             if (!pool.ContainsKey(name))
             {
-                bool ret = WarmUp(name, 10);
+                bool ret = WarmUp(name, 5);
                 if (!ret) return null;
             }
 
@@ -109,7 +109,7 @@ namespace UP01
         public void Add(PoolObject obj)
         {
             obj.gameObject.SetActive(false);
-            pool[obj.LayoutName].Enqueue(obj);
+            pool[obj.Name].Enqueue(obj);
         }
     }
 }

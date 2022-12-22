@@ -7,8 +7,12 @@ namespace UP08
     // PoolObject
     using UP01;
 
-    public abstract class Popup : PoolObject, IUILayout
+    [RequireComponent(typeof(PoolObject))]
+    public abstract class Popup : MonoBehaviour, IUILayout
     {
+        // [SerializeField] protected string layoutName;
+        public string LayoutName => name;
+
         [SerializeField] protected Canvas canvas;
 
         public abstract IEnumerator OnEnter(UIEventParam param = null);

@@ -6,7 +6,7 @@ namespace UP01
 {
     public class PoolObject : MonoBehaviour
     {
-        public string LayoutName { get; set; }
+        public string Name { get; set; }
 
         public void Return()
         {

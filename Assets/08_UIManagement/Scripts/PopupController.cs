@@ -24,6 +24,7 @@ namespace UP08
                 var poolObj = PoolManager.Instance.Get(name);
                 if (poolObj == null) return;
                 popup = poolObj.GetComponent<Popup>();
+                popup.transform.parent = instance.transform;
             }
 
             if (popup == null) return;
@@ -48,6 +49,10 @@ namespace UP08
 
                 PopupStack.RemoveAt(PopupStack.Count - 1);
                 yield return hiddenPopup.OnExit();
+                hiddenPopup.gameObject.SetActive(false);
+
+                var poolObj = hiddenPopup.GetComponent<PoolObject>();
+                poolObj?.Return();
             }
         }
 
