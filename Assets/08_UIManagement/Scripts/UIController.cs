@@ -1,12 +1,13 @@
 namespace UP08
 {
+    using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
 
     // SmartCoroutine
     using UP04;
 
-    public class UIController<T> : MonoBehaviour where T : MonoBehaviour, IUILayout
+    public abstract class UIController<T> : MonoBehaviour where T : MonoBehaviour, IUILayout
     {
         public static T Current { get; protected set; }
         protected static Dictionary<string, T> layouts = new Dictionary<string, T>();
@@ -35,5 +36,12 @@ namespace UP08
 
             SmartCoroutine.Create(Current.OnEnter());
         }
+
+
+        public virtual void Release()
+        {
+            SmartCoroutine.Create(ReleaseAsync());
+        }
+        public abstract IEnumerator ReleaseAsync();
     }
 }

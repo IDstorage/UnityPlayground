@@ -17,7 +17,7 @@ namespace UP08
         }
 
         public T Data { get; set; }
-        public CustomLinkedList<T> Next { get; set; } = null;
+        public CustomLinkedList<T> Next { get; private set; } = null;
 
         public bool IsEmpty => Data == null && Next == null;
 

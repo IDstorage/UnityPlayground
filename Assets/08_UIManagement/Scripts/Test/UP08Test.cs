@@ -19,9 +19,11 @@ namespace UP08.Test
         {
             TestCustomLinkedList();
 
-            yield return TestSceneController();
+            //yield return TestSceneController();
 
-            yield return TestPopupController();
+            yield return TestSceneControllerAsync();
+
+            //yield return TestPopupController();
 
             yield break;
         }
@@ -136,6 +138,42 @@ namespace UP08.Test
                     PopupController.Show("CommonPopup2");
                 }
             }
+        }
+
+        private IEnumerator TestSceneControllerAsync()
+        {
+            Debug.Log("<color=red>Scene Open/CloseAsync Test Start</color>");
+
+            // MainScene
+            yield return SceneController.OpenAsync("MainScene");
+
+            // SubScene
+            yield return SceneController.OpenAsync("SubScene");
+
+            // SubScene + A1
+            yield return SceneController.OpenAsync("AdditiveScene1", SceneController.LoadSceneMode.Additive);
+            // SubScene + A1 + A2
+            yield return SceneController.OpenAsync("AdditiveScene2", SceneController.LoadSceneMode.Additive);
+
+            // SubScene + A2
+            yield return SceneController.CloseAsync("AdditiveScene1");
+            yield return new WaitForSeconds(1F);
+
+            // SubScene + A2 + A1
+            yield return SceneController.OpenAsync("AdditiveScene1", SceneController.LoadSceneMode.Additive);
+
+            // MainScene
+            yield return SceneController.OpenAsync("MainScene");
+
+            // MainScene + A1
+            yield return SceneController.OpenAsync("AdditiveScene1", SceneController.LoadSceneMode.Additive);
+            // MainScene + A1 + A2
+            yield return SceneController.OpenAsync("AdditiveScene2", SceneController.LoadSceneMode.Additive);
+
+            // Null
+            yield return SceneController.CloseAsync();
+
+            Debug.Log("<color=green>Scene Open/CloseAsync Test End</color>");
         }
     }
 }

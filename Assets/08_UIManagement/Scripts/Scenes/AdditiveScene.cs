@@ -8,6 +8,7 @@ namespace UP08
         public override IEnumerator OnEnter(UIEventParam param = null)
         {
             Debug.Log($">>>>> {LayoutName} Enter");
+            yield return new WaitForSeconds(1F);
             yield break;
         }
 

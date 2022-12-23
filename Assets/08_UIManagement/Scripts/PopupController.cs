@@ -17,48 +17,12 @@ namespace UP08
 
         public static void Show(string name, UIEventParam param = null)
         {
-            Popup popup = null;
-
-            if (!layouts.TryGetValue(name, out popup))
-            {
-                var poolObj = PoolManager.Instance.Get(name);
-                if (poolObj == null) return;
-                popup = poolObj.GetComponent<Popup>();
-                popup.transform.parent = instance.transform;
-            }
-
-            if (popup == null) return;
-
-            SmartCoroutine.Create(CoShow(popup));
-
-            IEnumerator CoShow(Popup popup)
-            {
-                popup.Order = Current == null ? 0 : Current.Order + 1;
-
-                Current = popup;
-                PopupStack.Add(popup);
-
-                yield return popup.OnEnter(param);
-            }
+            SmartCoroutine.Create(ShowAsync(name, param));
         }
 
         public static void Hide()
         {
-            SmartCoroutine.Create(CoHide());
-
-            IEnumerator CoHide()
-            {
-                var hiddenPopup = PopupStack[PopupStack.Count - 1];
-
-                PopupStack.RemoveAt(PopupStack.Count - 1);
-                Current = PopupStack.Count == 0 ? null : PopupStack[PopupStack.Count - 1];
-
-                hiddenPopup.gameObject.SetActive(false);
-                yield return hiddenPopup.OnExit();
-
-                var poolObj = hiddenPopup.GetComponent<PoolObject>();
-                poolObj?.Return();
-            }
+            SmartCoroutine.Create(HideAsync());
         }
 
         public static void Hide(string name)
@@ -68,6 +32,54 @@ namespace UP08
         public static void Hide(Popup popup)
         {
             if (Focus(popup)) Hide();
+        }
+
+
+        public static IEnumerator ShowAsync(string name, UIEventParam param = null)
+        {
+            Popup popup = null;
+
+            if (!layouts.TryGetValue(name, out popup))
+            {
+                var poolObj = PoolManager.Instance.Get(name);
+                if (poolObj == null) yield break;
+                popup = poolObj.GetComponent<Popup>();
+                popup.transform.parent = instance.transform;
+            }
+
+            if (popup == null) yield break;
+
+            popup.Order = Current == null ? 0 : Current.Order + 1;
+
+            Current = popup;
+            PopupStack.Add(popup);
+
+            yield return popup.OnEnter(param);
+        }
+
+        public static IEnumerator HideAsync()
+        {
+            var hiddenPopup = PopupStack[PopupStack.Count - 1];
+
+            PopupStack.RemoveAt(PopupStack.Count - 1);
+            Current = PopupStack.Count == 0 ? null : PopupStack[PopupStack.Count - 1];
+
+            hiddenPopup.gameObject.SetActive(false);
+            yield return hiddenPopup.OnExit();
+
+            var poolObj = hiddenPopup.GetComponent<PoolObject>();
+            poolObj?.Return();
+        }
+
+        public static IEnumerator HideAsync(string name)
+        {
+            if (Focus(name)) yield return HideAsync();
+            yield break;
+        }
+        public static IEnumerator HideAsync(Popup popup)
+        {
+            if (Focus(popup)) yield return HideAsync();
+            yield break;
         }
 
 
@@ -114,6 +126,15 @@ namespace UP08
         public static bool IsOpened(Popup popup)
         {
             return FindIndex(popup) >= 0;
+        }
+
+
+        public override IEnumerator ReleaseAsync()
+        {
+            while (PopupStack.Count > 0)
+            {
+                yield return HideAsync();
+            }
         }
     }
 }

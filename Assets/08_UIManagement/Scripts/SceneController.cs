@@ -23,6 +23,16 @@ namespace UP08
             SmartCoroutine.Create(OpenAsync(name, mode, param));
         }
 
+        public static void Close()
+        {
+            SmartCoroutine.Create(CloseAsync());
+        }
+        public static void Close(string name)
+        {
+            SmartCoroutine.Create(CloseAsync(name));
+        }
+
+
         public static IEnumerator OpenAsync(string name, LoadSceneMode mode = LoadSceneMode.Single, UIEventParam param = null)
         {
             Debug.Assert(layouts.ContainsKey(name), $"No such scene: {name}");
@@ -36,6 +46,7 @@ namespace UP08
                 yield break;
             }
 
+            yield return CloseAdditionAsync();
             Close();
 
             Current = layouts[name];
@@ -43,43 +54,64 @@ namespace UP08
             yield return Current.OnEnter(param);
         }
 
-        public static void Close()
+        private static IEnumerator CloseAdditionAsync()
         {
-            var dummyCurrent = Current;
-            Current = null;
-            SmartCoroutine.Create(CoClose(dummyCurrent));
-        }
-
-        private static IEnumerator CoClose(Scene current)
-        {
+            List<SmartCoroutine> release = new List<SmartCoroutine>();
             for (var iter = Addition.Begin; iter != null; ++iter)
             {
                 if (iter.Current.Data == null) continue;
 
                 iter.Current.Data.gameObject.SetActive(false);
-                yield return iter.Current.Data.OnExit();
+
+                release.Add(SmartCoroutine.Create(iter.Current.Data.OnExit));
+                release[release.Count - 1].Start();
+            }
+
+            while (release.Count > 0)
+            {
+                for (int i = 0; i < release.Count; ++i)
+                {
+                    if (release[i].IsRunning) continue;
+
+                    release[i] = release[release.Count - 1];
+                    release.RemoveAt(release.Count - 1);
+                }
+
+                yield return null;
             }
 
             Addition.Clear();
+        }
+        public static IEnumerator CloseAsync()
+        {
+            var dummyCurrent = Current;
+            Current = null;
 
-            if (current != null)
+            yield return CloseAdditionAsync();
+
+            if (dummyCurrent != null)
             {
-                current.gameObject.SetActive(false);
-                yield return current.OnExit();
+                dummyCurrent.gameObject.SetActive(false);
+                yield return dummyCurrent.OnExit();
             }
         }
-
-        public static void Close(string name)
+        public static IEnumerator CloseAsync(string name)
         {
             Debug.Assert(layouts.ContainsKey(name));
 
             var findRet = Addition.Find(ui => ui.LayoutName.CompareTo(name) == 0);
-            if (findRet == null) return; // Throw exception?
+            if (findRet == null) yield break; // Throw exception?
 
             Addition.Remove(findRet);
 
             findRet.gameObject.SetActive(false);
-            SmartCoroutine.Create(findRet.OnExit());
+            yield return findRet.OnExit();
+        }
+
+
+        public override IEnumerator ReleaseAsync()
+        {
+            yield return CloseAsync();
         }
     }
 }
