@@ -18,6 +18,14 @@ namespace UP08
         public static CustomLinkedList<Scene> Addition { get; protected set; } = new CustomLinkedList<Scene>();
 
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            Addition.Clear();
+        }
+
+
         public static void Open(string name, LoadSceneMode mode = LoadSceneMode.Single, UIEventParam param = null)
         {
             SmartCoroutine.Create(OpenAsync(name, mode, param));

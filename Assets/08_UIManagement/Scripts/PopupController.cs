@@ -12,8 +12,14 @@ namespace UP08
 
     public class PopupController : UIController<Popup>
     {
-        public static List<Popup> PopupStack { get; protected set; } = new List<Popup>();
+        private static List<Popup> popupStack = new List<Popup>();
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            popupStack.Clear();
+        }
 
         public static void Show(string name, UIEventParam param = null)
         {
@@ -52,17 +58,17 @@ namespace UP08
             popup.Order = Current == null ? 0 : Current.Order + 1;
 
             Current = popup;
-            PopupStack.Add(popup);
+            popupStack.Add(popup);
 
             yield return popup.OnEnter(param);
         }
 
         public static IEnumerator HideAsync()
         {
-            var hiddenPopup = PopupStack[PopupStack.Count - 1];
+            var hiddenPopup = popupStack[popupStack.Count - 1];
 
-            PopupStack.RemoveAt(PopupStack.Count - 1);
-            Current = PopupStack.Count == 0 ? null : PopupStack[PopupStack.Count - 1];
+            popupStack.RemoveAt(popupStack.Count - 1);
+            Current = popupStack.Count == 0 ? null : popupStack[popupStack.Count - 1];
 
             hiddenPopup.gameObject.SetActive(false);
             yield return hiddenPopup.OnExit();
@@ -101,22 +107,22 @@ namespace UP08
         }
         private static void Focus(int idx)
         {
-            var targetPopup = PopupStack[idx];
+            var targetPopup = popupStack[idx];
 
-            PopupStack.RemoveAt(idx);
-            PopupStack.Add(targetPopup);
+            popupStack.RemoveAt(idx);
+            popupStack.Add(targetPopup);
 
             targetPopup.Order = Current.Order;
-            Current = PopupStack[PopupStack.Count - 1];
+            Current = popupStack[popupStack.Count - 1];
         }
 
         public static int FindIndex(string name)
         {
-            return PopupStack.FindIndex(p => p.LayoutName.CompareTo(name) == 0);
+            return popupStack.FindIndex(p => p.LayoutName.CompareTo(name) == 0);
         }
         public static int FindIndex(Popup popup)
         {
-            return PopupStack.FindIndex(p => ReferenceEquals(p, popup));
+            return popupStack.FindIndex(p => ReferenceEquals(p, popup));
         }
 
         public static bool IsOpened(string name)
@@ -131,7 +137,7 @@ namespace UP08
 
         public override IEnumerator ReleaseAsync()
         {
-            while (PopupStack.Count > 0)
+            while (popupStack.Count > 0)
             {
                 yield return HideAsync();
             }
